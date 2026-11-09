@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: novapay-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/novapay_db
+    username: novapay_user
+    password: NovaPay_Dev_2026!
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate          # Flyway مسئول schema است، Hibernate فقط validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.novapay: DEBUG
+    org.flywaydb: INFO
+
+# ---- App-specific ----
+novapay:
+  jwt:
+    secret: "CHANGE_ME_TO_A_LONG_RANDOM_SECRET_AT_LEAST_64_CHARS_FOR_HS512_SAFETY_0123456789ABCDEF"
+    access-token-ttl-seconds: 900        
+    refresh-token-ttl-seconds: 604800   
+  cors:
+    allowed-origins:
+      - http://localhost:3000
