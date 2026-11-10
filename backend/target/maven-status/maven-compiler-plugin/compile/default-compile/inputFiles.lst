@@ -1,5 +1,13 @@
 /home/parsaduman/novapay/backend/src/main/java/com/novapay/HealthController.java
 /home/parsaduman/novapay/backend/src/main/java/com/novapay/NovaPayApplication.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/auth/AuthController.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/auth/AuthService.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/auth/JwtService.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/auth/dto/AuthResponse.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/auth/dto/LoginRequest.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/auth/dto/RefreshRequest.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/auth/dto/RegisterRequest.java
+/home/parsaduman/novapay/backend/src/main/java/com/novapay/common/GlobalExceptionHandler.java
 /home/parsaduman/novapay/backend/src/main/java/com/novapay/config/SecurityConfig.java
 /home/parsaduman/novapay/backend/src/main/java/com/novapay/user/RefreshToken.java
 /home/parsaduman/novapay/backend/src/main/java/com/novapay/user/RefreshTokenRepository.java
