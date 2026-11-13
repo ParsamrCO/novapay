@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 public class SecurityConfig {
 
@@ -19,9 +18,16 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/health", "/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers(
+                    "/api/health",
+                    "/api/auth/**",
+                    "/actuator/health",
+                    "/actuator/info"
+                ).permitAll()
                 .anyRequest().authenticated()
-            );
+            )
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable);
         return http.build();
     }
 

@@ -51,7 +51,7 @@ public class AuthService {
     @Transactional 
     public AuthResponse register(RegisterRequest req){
         String email = req.email().trim().toLowerCase();
-        if (userRepo.existsByEmailIgnorecase(email)) {
+        if (userRepo.existsByEmailIgnoreCase(email)) {
             throw new IllegalStateException("EMAIL_TAKEN");
         }
         User u = new User();
