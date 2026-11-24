@@ -31,6 +31,12 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Column(name = "avatar_url", length = 500)
+    private String avatarUrl;
+
+    @Column(length = 500)
+    private String bio;
+
     @PrePersist
     void onCreate() {
         Instant now = Instant.now();
@@ -56,4 +62,8 @@ public class User {
     public void setStatus(UserStatus status) { this.status = status; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
 }

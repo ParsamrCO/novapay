@@ -35,4 +35,16 @@ public class AuthController {
         authService.logout(req);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
+        authService.requestPasswordReset(req.email());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
+        authService.resetPassword(req);
+        return ResponseEntity.noContent().build();
+    }
 }

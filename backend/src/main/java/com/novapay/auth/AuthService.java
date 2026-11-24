@@ -16,11 +16,14 @@ import com.novapay.auth.dto.AuthResponse;
 import com.novapay.auth.dto.LoginRequest;
 import com.novapay.auth.dto.RefreshRequest;
 import com.novapay.auth.dto.RegisterRequest;
+import com.novapay.common.MailService;
 import com.novapay.user.RefreshToken;
 import com.novapay.user.RefreshTokenRepository;
 import com.novapay.user.User;
 import com.novapay.user.UserRepository;
 import com.novapay.user.UserStatus;
+import com.novapay.common.MailService;
+import com.novapay.auth.dto.ResetPasswordRequest;
 
 import jakarta.transaction.Transactional;
 
@@ -32,17 +35,23 @@ public class AuthService {
     private final JwtService jwtService;
     private final long refreshTtlSeconds;
     private final SecureRandom secureRandom = new SecureRandom();
+    private final PasswordResetTokenRepository passwordResetTokenRepo;
+    private final MailService mailService;
 
 
     public AuthService(
         UserRepository userRepo,
         RefreshTokenRepository refreshRepo,
+        PasswordResetTokenRepository passwordResetTokenRepo,
+        MailService mailService,
         PasswordEncoder passwordEncoder,
         JwtService jwtService,
         @Value("${novapay.jwt.refresh-token-ttl-seconds}") long refreshTtlSeconds
     ) {
         this.userRepo = userRepo;
         this.refreshRepo = refreshRepo;
+        this.passwordResetTokenRepo = passwordResetTokenRepo;
+        this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.refreshTtlSeconds = refreshTtlSeconds;
@@ -97,6 +106,34 @@ public class AuthService {
         refreshRepo.findByTokenHash(hash).ifPresent(rt -> rt.setRevoked(true));
     }
 
+    @Transactional
+    public void requestPasswordReset(String email) {
+        userRepo.findByEmailIgnoreCase(email.trim().toLowerCase()).ifPresent(u -> {
+            String raw = generateOpaqueToken();
+            PasswordResetToken prt = new PasswordResetToken();
+            prt.setUserId(u.getId());
+            prt.setTokenHash(sha256Hex(raw));
+            prt.setExpiresAt(Instant.now().plusSeconds(300)); // 5 دقیقه
+            passwordResetTokenRepo.save(prt);
+
+            // لینک به فرانت‌اند (توی dev لاگ می‌شه)
+            String link = "http://localhost:3000/reset-password?token=" + raw;
+            mailService.sendPasswordResetLink(u.getEmail(), link);
+        });
+    }
+
+
+    @Transactional 
+    public void resetPassword(ResetPasswordRequest req){
+        String hash = sha256Hex(req.token());
+        PasswordResetToken prt= passwordResetTokenRepo.findByTokenHash(hash).orElseThrow(() -> new IllegalStateException("INVALID_RESET"));
+        if (prt.getUsedAt() != null || prt.getExpiresAt().isBefore(Instant.now())) {
+            throw new IllegalStateException("INVALID_RESET");
+        }
+        User u = userRepo.findById(prt.getUserId()).orElseThrow(() -> new IllegalStateException("INVALID_RESET"));
+        u.setPasswordHash(passwordEncoder.encode(req.newPassword()));
+        prt.setUsedAt(Instant.now());
+    }
 
     private AuthResponse issueTokens(User u) {
         String access = jwtService.generateAccessToken(u.getId(), u.getEmail());

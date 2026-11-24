@@ -34,6 +34,8 @@ public class GlobalExceptionHandler {
                 ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body(401, "INVALID_REFRESH", null));
             case "ACCOUNT_INACTIVE" ->
                 ResponseEntity.status(HttpStatus.FORBIDDEN).body(body(403, "ACCOUNT_INACTIVE", null));
+            case "INVALID_RESET" ->
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body(400, "INVALID_RESET", null));
             default ->
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body(400, ex.getMessage(), null));
         };
