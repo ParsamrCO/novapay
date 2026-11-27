@@ -36,6 +36,16 @@ public class GlobalExceptionHandler {
                 ResponseEntity.status(HttpStatus.FORBIDDEN).body(body(403, "ACCOUNT_INACTIVE", null));
             case "INVALID_RESET" ->
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body(400, "INVALID_RESET", null));
+            case "ACCOUNT_NOT_FOUND", "TX_NOT_FOUND" ->
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(body(404, ex.getMessage(), null));
+            case "ACCOUNT_FORBIDDEN", "TX_FORBIDDEN" ->
+                ResponseEntity.status(HttpStatus.FORBIDDEN).body(body(403, ex.getMessage(), null));
+            case "ACCOUNT_NAME_TAKEN" ->
+                ResponseEntity.status(HttpStatus.CONFLICT).body(body(409, ex.getMessage(), null));
+            case "ACCOUNT_CLOSED", "ACCOUNT_ALREADY_CLOSED", "ACCOUNT_NONZERO_BALANCE",
+                "LEDGER_MIN_ENTRIES", "LEDGER_INVALID_AMOUNT", "LEDGER_IMBALANCE",
+                "TX_ALREADY_REVERSED" ->
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body(400, ex.getMessage(), null));
             default ->
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body(400, ex.getMessage(), null));
         };

@@ -30,7 +30,7 @@ public class Account {
     @Column(nullable = false , length = 20)
     private AccountType type;
 
-    @Column(nullable = false ,length = 3)
+    @Column(nullable = false, length = 3, columnDefinition = "char(3)")
     private String currency = "IRR";
 
     @Enumerated(EnumType.STRING)
